@@ -1,7 +1,8 @@
 package com.anuj.org.conftroller;
 
-import com.anuj.org.model.FileMetadata;
+import com.anuj.org.model.FormParameter;
 import com.anuj.org.model.UploadFileResponse;
+import com.anuj.org.service.FileStorageCloudServiceImpl;
 import com.anuj.org.service.FileStorageServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +31,9 @@ public class FileManagementController {
     private FileStorageServiceImpl fileStorageService;
 
     @PostMapping("/uploadFile")
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, @ModelAttribute FileMetadata metadata) {
-        String fileName = fileStorageService.storeFile(file,metadata);
-        System.err.println(metadata);
+    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, @ModelAttribute FormParameter formParameter) {
+        String fileName = fileStorageService.addFile(file,formParameter);
+        System.err.println(formParameter);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/")
@@ -51,7 +52,7 @@ public class FileManagementController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/downloadFile/{fileName:.+}")
+   /* @GetMapping("/downloadFile/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
         // Load file as Resource
         org.springframework.core.io.Resource resource = fileStorageService.loadFileAsResource(fileName);
@@ -73,5 +74,5 @@ public class FileManagementController {
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
-    }
+    }*/
 }
